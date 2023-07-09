@@ -1,11 +1,13 @@
 
 import { Database } from "./database.js";
 const database = new Database()
+import { buildRoutePath } from "./utils/build-route-path.js";
+import { v4 as uuidv4 } from 'uuid';
 
 export const routes = [
     {
         method: 'GET',
-        path: '/users',
+        path: buildRoutePath('/users'),
         handler: (req,res) => {
             const users = database.select('Users')
             return res.end(JSON.stringify(users));
@@ -13,11 +15,11 @@ export const routes = [
     },
     {
         method: 'POST',
-        path: '/users',
+        path: buildRoutePath('/users'),
         handler: (req,res) => {
-            const {name,email} = request.body
+            const {name,email} = req.body
             const user = {
-                id: randomUUID(),
+                id: uuidv4(),
                 name,
                 email
             }
@@ -26,5 +28,12 @@ export const routes = [
         
             return res.writeHead(201).end()
            }
+    },
+    {
+        method: 'DELETE',
+        path:buildRoutePath('/users/:id'),
+        handler: (req,res) =>{
+          return res.end()  
+        },
     }
 ]
