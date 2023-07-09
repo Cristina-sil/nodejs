@@ -3,6 +3,7 @@ import http from 'node:http';
 import {randomUUID} from 'node:crypto'
 import { json } from './middlewares/json.js';
 import { routes } from './routes.js';
+import { extractQueryParams } from './utils/extract-query-params.js';
 
 const server = http.createServer(async(request,response)=> {
     const {method,url} = request
@@ -14,7 +15,11 @@ const server = http.createServer(async(request,response)=> {
 
     if (route){
        const routParams = request.url.match(route.path)
-       request.params = {...routParams.groups}
+       const {query, ...params} = routParams.groups
+       
+       request.params = params
+       request.query = query? extractQueryParams(query) : {}
+       
        return route.handler(request,response)
     }
 
